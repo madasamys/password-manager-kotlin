@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 
@@ -30,14 +31,11 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         passwordAdapter = PasswordAdapter(passwordList)
-
         recyclerView = findViewById(R.id.recycler_view) as RecyclerView
         val mLayoutManager = LinearLayoutManager(applicationContext)
         recyclerView!!.layoutManager = mLayoutManager
         recyclerView!!.itemAnimator = DefaultItemAnimator()
         recyclerView!!.adapter = passwordAdapter
-        passwordList.addAll(passwordService.findAll())
-        passwordAdapter!!.notifyDataSetChanged()
     }
 
     fun onTapAddPassword(view: View)
@@ -56,6 +54,16 @@ class MainActivity : AppCompatActivity()
             }
             else -> return true
         }
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        val size = passwordList.size
+        passwordList.clear()
+        passwordAdapter!!.notifyItemRangeRemoved(0, size);
+        passwordList.addAll(passwordService.findAll())
+        passwordAdapter!!.notifyDataSetChanged()
     }
 
     override fun onBackPressed()

@@ -7,7 +7,6 @@ import io.realm.Sort
 
 /**
  * @author Madasamy
- * *
  * @version 1.0.0
  */
 

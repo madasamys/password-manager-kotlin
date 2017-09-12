@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 /**
  * Author : Madasamy
- * Version : x.x.x
+ * Version : 1.0.0
  */
 
 @RunWith(AndroidJUnit4.class)
@@ -36,8 +36,8 @@ public class PasswordServiceTest
         Realm.setDefaultConfiguration(config);
         passwordService = new PasswordService();
 
-         password = new Password("foo", "89890");
-         passwordService.create(password);
+        password = new Password("foo", "89890");
+        passwordService.create(password);
     }
 
     @After
@@ -59,7 +59,21 @@ public class PasswordServiceTest
         password.setUserName("f001");
         passwordService.update(password);
         assertEquals(1, passwordService.count());
+    }
 
+    @Test
+    public void testDeleteById()
+    {
+        passwordService.deleteById(password.getId());
+        assertEquals(0, passwordService.count());
+    }
+
+    @Test
+    public void testDelete()
+    {
+        Password password = passwordService.findById(this.password.getId());
+        passwordService.delete(password);
+        assertEquals(0, passwordService.count());
     }
 
 }

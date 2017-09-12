@@ -13,6 +13,8 @@ import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
+import com.mcruncher.password.domain.Password
+import com.mcruncher.password.service.PasswordService
 
 
 /**
@@ -23,11 +25,12 @@ import android.widget.EditText
 class ManagePasswordActivity : AppCompatActivity()
 {
     private var accountInputLayoutName: TextInputLayout? = null
-    var accountEditText: EditText? = null
+    private var accountEditText: EditText? = null
     private var usernameInputLayout: TextInputLayout? = null
     private var userNameEditText: EditText? = null
     private var passwordInputLayoutName: TextInputLayout? = null
     private var passwordEditText: EditText? = null
+    private var passwordService = PasswordService()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -159,6 +162,12 @@ class ManagePasswordActivity : AppCompatActivity()
         {
             return
         }
+        val password = Password()
+        password.accountName = accountEditText?.text.toString()
+        password.userName = userNameEditText?.text.toString()
+        password.password = passwordEditText?.text.toString()
+        passwordService.create(password)
+        finish()
     }
 
 }

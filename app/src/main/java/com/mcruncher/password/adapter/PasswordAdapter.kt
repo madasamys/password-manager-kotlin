@@ -14,7 +14,13 @@ import com.mcruncher.password.domain.Password
  * Version : x.x.x
  */
 
-class PasswordAdapter(private val passwordList: List<Password>) : RecyclerView.Adapter<PasswordAdapter.MyViewHolder>() {
+class PasswordAdapter(private var passwordList: List<Password>) : RecyclerView.Adapter<PasswordAdapter.MyViewHolder>() {
+   // var passwordList:List<Password>
+
+//    init
+//    {
+//
+//    }
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var accountName: TextView
@@ -44,4 +50,6 @@ class PasswordAdapter(private val passwordList: List<Password>) : RecyclerView.A
     override fun getItemCount(): Int {
         return passwordList.size
     }
+
+
 }
