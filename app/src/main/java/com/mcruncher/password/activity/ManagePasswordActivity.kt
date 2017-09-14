@@ -211,11 +211,11 @@ class ManagePasswordActivity : AppCompatActivity()
         password.password = passwordEditText?.text.toString()
         if (isEdit())
         {
-            passwordService.create(password)
-        } else
-        {
             password.id = this.password.id
             passwordService.update(password)
+        } else
+        {
+            passwordService.create(password)
         }
     }
 
