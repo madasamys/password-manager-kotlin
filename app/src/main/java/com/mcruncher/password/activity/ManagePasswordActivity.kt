@@ -13,6 +13,7 @@ import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
+import com.mcruncher.password.CommonConstants
 import com.mcruncher.password.domain.Password
 import com.mcruncher.password.service.PasswordService
 
@@ -31,15 +32,26 @@ class ManagePasswordActivity : AppCompatActivity()
     private var passwordInputLayoutName: TextInputLayout? = null
     private var passwordEditText: EditText? = null
     private var passwordService = PasswordService()
+    private var password = Password()
+    private var editMode = false
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.manage_password_layout)
+        initSetUp()
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         setAccountName()
         setUsername()
         setPassword()
+        disableComponent(editMode)
+    }
+
+    private fun initSetUp()
+    {
+        val id = intent.getLongExtra(CommonConstants.ID_KEY, 0)
+        password = passwordService.findById(id)
+        editMode = !isEdit()
     }
 
     private fun setAccountName()
@@ -47,6 +59,7 @@ class ManagePasswordActivity : AppCompatActivity()
         accountInputLayoutName = findViewById(R.id.input_layout_account) as TextInputLayout
         accountEditText = findViewById(R.id.account_name_edit_text) as EditText
         accountEditText!!.addTextChangedListener(MyTextWatcher(accountEditText))
+        accountEditText!!.setText(password.accountName ?: "")
     }
 
     private fun setUsername()
@@ -54,6 +67,7 @@ class ManagePasswordActivity : AppCompatActivity()
         usernameInputLayout = findViewById(R.id.input_layout_username) as TextInputLayout
         userNameEditText = findViewById(R.id.username_edit_text) as EditText
         userNameEditText!!.addTextChangedListener(MyTextWatcher(userNameEditText))
+        userNameEditText!!.setText(password.userName ?: "")
     }
 
 
@@ -62,6 +76,7 @@ class ManagePasswordActivity : AppCompatActivity()
         passwordInputLayoutName = findViewById(R.id.input_layout_password) as TextInputLayout
         passwordEditText = findViewById(R.id.password_edit_text) as EditText
         passwordEditText!!.addTextChangedListener(MyTextWatcher(passwordEditText))
+        passwordEditText!!.setText(password.password ?: "")
     }
 
     override fun onBackPressed()
@@ -133,6 +148,7 @@ class ManagePasswordActivity : AppCompatActivity()
     override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
         menuInflater.inflate(R.menu.manage_actions, menu)
+        menu.findItem(R.id.save).title = if (editMode) getString(R.string.save) else getString(R.string.edit)
         return true
     }
 
@@ -147,27 +163,62 @@ class ManagePasswordActivity : AppCompatActivity()
             }
             R.id.save ->
             {
-                save(item)
-                return true
+                return updateComponentsAndSave(item)
             }
             else -> return true
         }
     }
 
-    private fun save(item: MenuItem)
+    private fun updateComponentsAndSave(item: MenuItem): Boolean
+    {
+        if (item.title == getString(R.string.edit))
+        {
+            item.title = getString(R.string.save)
+            editMode = true
+            disableComponent(editMode)
+        } else
+        {
+            validateAndSave(item)
+        }
+        return true
+    }
+
+    private fun disableComponent(editMode: Boolean)
+    {
+        accountInputLayoutName!!.isEnabled = editMode
+        accountEditText!!.isEnabled = editMode
+        userNameEditText!!.isEnabled = editMode
+        passwordEditText!!.isEnabled = editMode
+    }
+
+    private fun validateAndSave(item: MenuItem)
     {
         if (!validateName(accountEditText, accountInputLayoutName, getString(R.string.err_msg_name))
-                && !validateName(userNameEditText, usernameInputLayout, "Enter username") &&
-                !validateName(passwordEditText, passwordInputLayoutName, "Enter password"))
+                && !validateName(userNameEditText, usernameInputLayout, getString(R.string.error_message_username)) &&
+                !validateName(passwordEditText, passwordInputLayoutName, getString(R.string.error_message_password)))
         {
             return
         }
+        savePassword()
+        finish()
+    }
+
+    private fun savePassword()
+    {
         val password = Password()
         password.accountName = accountEditText?.text.toString()
         password.userName = userNameEditText?.text.toString()
         password.password = passwordEditText?.text.toString()
-        passwordService.create(password)
-        finish()
+        if (isEdit())
+        {
+            passwordService.create(password)
+        } else
+        {
+            password.id = this.password.id
+            passwordService.update(password)
+        }
     }
+
+    private fun isEdit() = password.id > 0
 
 }

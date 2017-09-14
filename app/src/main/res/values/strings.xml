@@ -8,4 +8,8 @@
     <string name="err_msg_name">Enter your full name</string>
     <string name="err_msg_email">Enter valid email address</string>
     <string name="err_msg_password">Enter the password</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="error_message_username">Enter username</string>
+    <string name="error_message_password">Enter password</string>
 </resources>

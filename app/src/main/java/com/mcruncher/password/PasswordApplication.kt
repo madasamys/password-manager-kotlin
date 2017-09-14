@@ -8,7 +8,7 @@ import io.realm.RealmConfiguration
 
 /**
  * Author : Madasamy
- * Version : x.x.x
+ * Version : 1.0.0
  */
 
 class PasswordApplication : Application() {
@@ -21,7 +21,7 @@ class PasswordApplication : Application() {
 
     companion object {
         var context: Context? = null
-            private set
+          //  private set
 
         fun setRealmConfiguration() {
             Realm.init(context)
